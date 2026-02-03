@@ -3,7 +3,7 @@ from __future__ import annotations
 from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, BufferedInputFile
 
 from bot.core.config import AppConfig
 from bot.core.storage import UserSettingsStore
@@ -152,7 +152,10 @@ async def text_body(
         output_format=data["output_format"],
     )
     await state.clear()
-    await message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
 
 
@@ -205,7 +208,10 @@ async def image_pdf_done(
         return
     document = service.images_to_pdf(images, title=data.get("title"))
     await state.clear()
-    await callback.message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await callback.message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await callback.message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
     await callback.answer()
 
@@ -229,7 +235,10 @@ async def passport_image(
     image_bytes = await download_photo(message.bot, photo)
     document = service.image_to_passport(image_bytes, as_pdf=False)
     await state.clear()
-    await message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
 
 
@@ -269,7 +278,10 @@ async def pdf_merge_done(
         return
     document = service.merge_pdfs(pdfs)
     await state.clear()
-    await callback.message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await callback.message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await callback.message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
     await callback.answer()
 
@@ -295,7 +307,10 @@ async def docx_to_pdf_handler(
     docx_bytes = await download_document(message.bot, message.document)
     document = service.docx_to_pdf(docx_bytes, title=None)
     await state.clear()
-    await message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
 
 
@@ -317,5 +332,8 @@ async def pdf_to_docx_handler(
     pdf_bytes = await download_document(message.bot, message.document)
     document = service.pdf_to_docx(pdf_bytes)
     await state.clear()
-    await message.answer_document((document.filename, document.content), caption=t(language, "success"))
+    await message.answer_document(
+        BufferedInputFile(document.content, filename=document.filename), 
+        caption=t(language, "success")
+    )
     await message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))

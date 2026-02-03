@@ -22,6 +22,6 @@ async def set_language(callback: CallbackQuery, state: FSMContext, settings: Use
     language = callback.data.split(":", 1)[1]
     settings.set_language(callback.from_user.id, language)
     await state.clear()
-    await callback.message.answer(t(language, "language_set", language=t(language, "language_name")))
+    await callback.message.answer(t(language, "language_set").format(language=t(language, "language_name")))
     await callback.message.answer(t(language, "menu_title"), reply_markup=menu_keyboard(language))
     await callback.answer()
